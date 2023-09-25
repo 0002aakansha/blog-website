@@ -1,37 +1,46 @@
 import blogInstance from "@/instances/blogInstance"
-import { BlogType } from "@/types/types"
+import { blogReducerType } from "@/types/types"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import axios from "axios"
 
-const initialState: { blogs: BlogType[] } = {
-    blogs: []
+const initialState: blogReducerType = {
+    blogs: [],
+    loading: false,
+    created: false,
+    error: ''
 }
 
-export const fetchAllBlogs = createAsyncThunk('blogs/fetch', async () => {
-    const { data } = await blogInstance({
-        url: '/',
-        method: 'GET',
-        headers: {
-            "Content-Type": 'application/json'
-        }
-    })
+export const fetchAllBlogs = createAsyncThunk('blogs/fetch', async (_, { rejectWithValue }) => {
+    try {
+        const { data } = await blogInstance({
+            url: '/',
+            method: 'GET',
+            headers: {
+                "Content-Type": 'application/json'
+            }
+        })
 
-    const blog = data.blog
-    return blog
+        if (data.success) return data.blog
+        else throw data.msg
+    } catch (error) {
+        return rejectWithValue(error)
+    }
 })
 
-export const createBlog = createAsyncThunk('blogs/create', async (blogData) => {
-    const { data } = await blogInstance({
-        url: '/',
-        method: 'POST',
-        headers: {
-            Authorization: localStorage.getItem('token')
-        },
-        data: JSON.stringify(blogData)
-    })
-    console.log(data);
-
-    return data
+export const createBlog = createAsyncThunk('blogs/create', async (blogData, { rejectWithValue }) => {
+    try {
+        const { data } = await blogInstance({
+            url: '/',
+            method: 'POST',
+            headers: {
+                Authorization: localStorage.getItem('token')
+            },
+            data: blogData
+        })
+        if (data.success) return data.blog
+        else throw (data.msg)
+    } catch (error) {
+        return rejectWithValue(error)
+    }
 })
 
 const blogs = createSlice({
@@ -40,17 +49,42 @@ const blogs = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder.addCase(fetchAllBlogs.pending, (state, action) => {
-            // console.log(action.payload);
+            state.loading = true
+            state.error = ''
             state.blogs = []
         })
         builder.addCase(fetchAllBlogs.fulfilled, (state, action) => {
-            // console.log(action.payload);
+            state.loading = false
+            state.error = ''
             state.blogs = action.payload
         })
+        builder.addCase(fetchAllBlogs.rejected, (state, action) => {
+            state.loading = false
+            state.blogs = []
+            state.error = action.payload
+        })
+        // create blog
+        builder.addCase(createBlog.pending, (state, action) => {
+            state.loading = true
+            state.error = ''
+            state.created = false
+            state.blogs = []
+        })
         builder.addCase(createBlog.fulfilled, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+            state.created = true
             console.log(action.payload);
 
-            // state.blogs.push(action.payload)
+            console.log(state.blogs);
+            state.blogs = [...state.blogs, action.payload]
+
+        })
+        builder.addCase(createBlog.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+            state.created = false
+            state.blogs = []
         })
     }
 })

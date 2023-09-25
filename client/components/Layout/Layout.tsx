@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast"
 import Navbar from "./Navbar"
 
 interface Props {

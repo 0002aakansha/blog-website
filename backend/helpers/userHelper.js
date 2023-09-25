@@ -27,7 +27,6 @@ async function createToken(id) {
     const token = await jwt.sign({ _id: id }, process.env.KEY, {
         expiresIn: '7d'
     })
-    // console.log(token);
     return token
 }
 

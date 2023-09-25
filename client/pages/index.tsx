@@ -1,24 +1,34 @@
-import { useEffect } from 'react'
 import Layout from '@/components/Layout/Layout'
-import { fetchAllBlogs } from '@/components/Store/blogsReducer';
-import { useDispatch } from 'react-redux';
 import Home from '@/components/Home';
 import { Toaster } from 'react-hot-toast'
+import { useCallback, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchAllBlogs } from '@/components/Store/blogsReducer';
+import { AppState } from '@/components/Store/store';
+import { blogReducerType } from '@/types/types';
+import Spinner from '@/components/Layout/Spinner';
 
 const HomePage = () => {
-    const dispatch = useDispatch()
+    const dispath = useDispatch()
+    const fetchBlogs = useCallback(() => dispath(fetchAllBlogs()), [])
+    const blogs = useSelector<AppState>(state => state.blogs) as blogReducerType
 
     useEffect(() => {
-        dispatch(fetchAllBlogs())
-    }, [])
-
+        fetchBlogs()
+    }, [fetchBlogs])
 
     return (
         <>
-            <Layout>
-                <Home />
-            </Layout>
-            <Toaster />
+            {
+                blogs.loading ? <Spinner /> : (
+                    <>
+                        <Layout>
+                            <Home />
+                        </Layout>
+                        <Toaster />
+                    </>
+                )
+            }
         </>
     )
 }
