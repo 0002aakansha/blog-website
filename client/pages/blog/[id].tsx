@@ -40,7 +40,6 @@ export async function getServerSideProps({ params }) {
             "Content-Type": 'application/json'
         }
     })
-    console.log(data);
 
     if (data.success) {
         return {

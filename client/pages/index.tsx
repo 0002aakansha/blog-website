@@ -1,4 +1,3 @@
-import Layout from '@/components/Layout/Layout'
 import Home from '@/components/Home';
 import { Toaster } from 'react-hot-toast'
 import { useCallback, useEffect } from "react"
@@ -15,16 +14,14 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchBlogs()
-    }, [fetchBlogs])
+    }, [fetchBlogs, blogs.created])
 
     return (
         <>
             {
                 blogs.loading ? <Spinner /> : (
                     <>
-                        <Layout>
-                            <Home />
-                        </Layout>
+                        <Home />
                         <Toaster />
                     </>
                 )

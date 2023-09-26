@@ -11,7 +11,7 @@ const schema = mongoose.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, unique: true },
     password: { type: String, required: true },
-    blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blogs' }]
+    blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 })
 
 const users = mongoose.model('user', schema)

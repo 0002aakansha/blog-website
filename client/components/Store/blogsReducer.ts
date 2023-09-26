@@ -1,3 +1,4 @@
+import { getCookie } from "@/auth/cookies"
 import blogInstance from "@/instances/blogInstance"
 import { blogReducerType } from "@/types/types"
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
@@ -32,7 +33,7 @@ export const createBlog = createAsyncThunk('blogs/create', async (blogData, { re
             url: '/',
             method: 'POST',
             headers: {
-                Authorization: localStorage.getItem('token')
+                Authorization: getCookie()
             },
             data: blogData
         })
@@ -74,11 +75,6 @@ const blogs = createSlice({
             state.loading = false
             state.error = action.payload
             state.created = true
-            console.log(action.payload);
-
-            console.log(state.blogs);
-            state.blogs = [...state.blogs, action.payload]
-
         })
         builder.addCase(createBlog.rejected, (state, action) => {
             state.loading = false

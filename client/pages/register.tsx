@@ -48,7 +48,7 @@ const Register = () => {
                         </div>
                         <div className='flex w-full justify-center my-4'>
                             <button
-                                className='bg-emerald-500 px-4 py-2 w-1/2 text-stone-100 text-xl tracking-wider rounded-md'
+                                className='bg-emerald-500 px-4 py-2 w-1/2 text-stone-100 text-lg tracking-wider rounded-md'
                                 disabled={user.loading ? true : false}
                             >{user.loading ? 'Creating account...' : 'Register'}</button>
                         </div>

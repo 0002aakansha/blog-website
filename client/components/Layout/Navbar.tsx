@@ -1,20 +1,22 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import BlogModal from './Modal'
+import toast from 'react-hot-toast'
+import { getCookie } from '@/auth/cookies' 
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isLoggedin, setisLoggedin] = useState(false)
 
     useEffect(() => {
-        localStorage.getItem('token') ? setisLoggedin(true) : setisLoggedin(false)
+        getCookie() ? setisLoggedin(true) : setisLoggedin(false)
     }, [])
 
     function checkUser() {
         if (isLoggedin) {
             setIsOpen(true)
         }
-        else alert('Please login first!')
+        else toast.error('Please login first!')
 
     }
 
@@ -35,6 +37,12 @@ const Navbar = () => {
                         >
                             Create Blog
                         </li>
+                        {isLoggedin && (<li
+                            className='font-semibold text-lg text-emerald-800 cursor-pointer py-[.3rem] mx-4'
+                        >
+                            <Link href='/userblogs'>Your Blogs</Link>
+                        </li>)
+                        }
                         {
                             !isLoggedin && (<Link
                                 href='/login'

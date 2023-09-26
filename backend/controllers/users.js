@@ -1,13 +1,14 @@
 const getUserByToken = require("../helpers/getUserByToken");
 const { hashpassword, comparePassword, createToken } = require("../helpers/userHelper");
 const users = require("../model/user")
+const mongoose = require('mongoose')
 
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body
         const User = await users.findOne({ email })
         if (!User) {
-            res.status(404).json({ success: false, msg: 'Please Login First!' })
+            res.status(404).json({ success: false, msg: 'Please Register First!' })
         }
         else {
             const isTrue = await comparePassword(password, User.password)
@@ -53,19 +54,8 @@ const getAuthorName = async (req, res) => {
 
 const getBlogsOfUser = async (req, res) => {
     try {
-        const user = await getUserByToken(req.user._id)
-        console.log(user);
-        const blogs = await users.aggregate(
-            {
-                $lookup: {
-                    from: "blogs",
-                    localField: "blogs",
-                    foreignField: "_id",
-                    as: "user_blogs",
-                },
-            })
-        console.log(blogs);
-        res.status(200).json({ success: true, user: { blogs } })
+        const curruser = await users.findOne({ _id: req.user._id }).populate('blogs')
+        res.status(200).json({ success: true, user: curruser })
 
     } catch (error) {
         res.status(404).json({ success: false, msg: error.message })
