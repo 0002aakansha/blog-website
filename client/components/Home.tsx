@@ -1,22 +1,31 @@
-import { useDispatch } from "react-redux"
 import Cards from "./Cards/Cards"
 import Slider from "./Slider/Slider"
-import { useEffect } from "react"
-import { fetchAllBlogs } from "./Store/blogsReducer"
 import Layout from "./Layout/Layout"
+import useSWR from "swr"
+import blogInstance from "@/instances/blogInstance"
+import { Spinner } from "@/utils/import"
+import toast from "react-hot-toast/headless"
 
 const Home = () => {
-    // const dispath = useDispatch()
-    // useEffect(() => {
-    //     dispath(fetchAllBlogs())
-    // }, [])
+    const { data, error, isLoading } = useSWR('/', async (...args) => {
+        const { data } = await blogInstance(...args)
+        return data
+    })
+
+    if (error) return toast.error('Error while fetching data!')
 
     return (
-        <Layout>
-            <h1 className="font-bold text-3xl text-center mt-4 mb-10">Trending</h1>
-            <Slider />
-            <Cards />
-        </Layout>
+        <>
+            {
+                isLoading ? <Spinner /> : (
+                    <Layout>
+                        <h1 className="font-bold text-3xl text-center mt-4 mb-10">Trending</h1>
+                        <Slider Blogs={data.blog} />
+                        <Cards Blogs={data.blog} />
+                    </Layout>
+                )
+            }
+        </>
     )
 }
 

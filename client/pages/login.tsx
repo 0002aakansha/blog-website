@@ -1,12 +1,12 @@
 import { FormEvent, useEffect, useState } from 'react'
-import Link from 'next/link'
-import React from 'react'
+import { Link, toast } from '../utils/import'
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from '@/components/Store/userReducer'
-import toast from 'react-hot-toast'
 import { userReducerType } from '@/types/types'
 import { AppState } from '@/components/Store/store'
 import { useRouter } from 'next/router'
+import useSWR from 'swr'
+import blogInstance from '@/instances/blogInstance'
+import { login } from '@/components/Store/userReducer'
 
 const Login = () => {
     const router = useRouter()
@@ -24,9 +24,18 @@ const Login = () => {
     }
 
     useEffect(() => {
-        if (user.isActive === true) router.push('/')
-        else if (user.error !== '') toast.error(user.error)
+    if (user.isActive === true) router.push('/')
+    else if (user.error !== '') toast.error(user.error)
     }, [user.isActive, user.error])
+
+    // const { data, error, isLoading } = useSWR('/', async (...args) => {
+    //     const {data} = await blogInstance(...args)
+    //     return data
+    // })
+
+    // if (error) return <h1>Something went wrong!</h1>
+    // if (isLoading) return <h1>Loading...</h1>
+    // if(data) return <p>data received</p>
 
     return (
         <div className='h-screen flex flex-col justify-center items-center bg-stone-200 text-stone-800 tracking-wider'>

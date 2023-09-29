@@ -1,6 +1,4 @@
 import { Swiper, SwiperSlide } from "swiper/react"
-import { useSelector } from 'react-redux'
-import { AppState } from "../Store/store";
 import { BlogType } from '@/types/types';
 import { Autoplay, Pagination } from "swiper/modules"
 import profile from '../../assets/User-Profile-PNG-Image.png';
@@ -11,10 +9,7 @@ import { convertToBase64 } from "@/utils/convertTobase64";
 import Image from "next/image";
 import Link from "next/link";
 
-const Slider = () => {
-
-  const blog = useSelector<AppState>(state => state.blogs.blogs) as BlogType[]
-  // console.log(blog);
+const Slider = ({ Blogs }: { Blogs: BlogType[] }) => {
 
   return (
     <Swiper
@@ -32,7 +27,7 @@ const Slider = () => {
       className="mySwiper container"
     >
       {
-        blog.map(blog => {
+        Blogs?.map(blog => {
           if (blog.isFeatured === true) {
             return (
               <SwiperSlide key={blog._id}>

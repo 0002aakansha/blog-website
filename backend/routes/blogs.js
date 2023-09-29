@@ -1,5 +1,5 @@
 const express = require('express')
-const { createBlog, getBlogs, deleteBlogs, getBlogById, deleteBlog } = require('../controllers/blogs')
+const { createBlog, getBlogs, deleteBlogs, getBlogById, deleteBlog, updateBlog } = require('../controllers/blogs')
 const { requireSignIn } = require('../middlewares/authMiddleware')
 const blogRouter = express.Router()
 const multer = require('multer')
@@ -19,6 +19,7 @@ blogRouter.post('/', requireSignIn, upload.single('image'), createBlog)
 blogRouter.get('/', getBlogs)
 blogRouter.get('/:id', getBlogById)
 // blogRouter.delete('/', deleteBlogs)
+blogRouter.patch('/:id', requireSignIn, upload.single('image'), updateBlog)
 blogRouter.delete('/', requireSignIn, deleteBlog)
 
 module.exports = blogRouter

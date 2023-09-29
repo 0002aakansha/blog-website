@@ -15,7 +15,7 @@ const initialState: userReducerType = {
     error: ''
 }
 
-export const login = createAsyncThunk('user/login', async (user, { rejectWithValue }) => {
+export const login = createAsyncThunk('user/login', async (user: {email: string, password: string}, { rejectWithValue }) => {
     try {
         const { data } = await userInstance({
             url: '/login',
@@ -34,6 +34,7 @@ export const login = createAsyncThunk('user/login', async (user, { rejectWithVal
         return rejectWithValue(error?.response?.data?.msg || error)
     }
 })
+
 
 export const register = createAsyncThunk('user/register', async (user, { rejectWithValue }) => {
     try {
@@ -128,7 +129,7 @@ const users = createSlice({
         })
 
         // fetch blogs
-        builder.addCase(fetchUserBlogs.pending, (state, action) => {
+        builder.addCase(fetchUserBlogs.pending, state => {
             state.loading = true
             state.error = ''
         })
@@ -139,7 +140,7 @@ const users = createSlice({
         })
         builder.addCase(fetchUserBlogs.rejected, (state, action) => {
             state.loading = false
-            state.error = action.payload
+            state.error = action.payload.response.data.msg || action.payload
         })
     }
 })

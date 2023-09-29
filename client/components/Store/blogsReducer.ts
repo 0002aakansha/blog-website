@@ -7,6 +7,7 @@ const initialState: blogReducerType = {
     blogs: [],
     loading: false,
     created: false,
+    updated: false,
     error: ''
 }
 
@@ -22,6 +23,30 @@ export const fetchAllBlogs = createAsyncThunk('blogs/fetch', async (_, { rejectW
 
         if (data.success) return data.blog
         else throw data.msg
+    } catch (error) {
+        return rejectWithValue(error)
+    }
+})
+
+export const updateBlog = createAsyncThunk('blogs/update', async (
+    { _id, formData }: { _id: string, formData: { title: string, body: string, image: File | null } },
+    { rejectWithValue }
+) => {
+    try {
+        const { data } = await blogInstance({
+            url: `/${_id}`,
+            method: 'PATCH',
+            headers: {
+                Authorization: getCookie()
+            },
+            data: formData
+        })
+
+        if (data.success) {
+            return data.result
+        }
+        else throw (data.msg)
+
     } catch (error) {
         return rejectWithValue(error)
     }
@@ -52,7 +77,6 @@ const blogs = createSlice({
         builder.addCase(fetchAllBlogs.pending, (state, action) => {
             state.loading = true
             state.error = ''
-            state.blogs = []
         })
         builder.addCase(fetchAllBlogs.fulfilled, (state, action) => {
             state.loading = false
@@ -61,7 +85,6 @@ const blogs = createSlice({
         })
         builder.addCase(fetchAllBlogs.rejected, (state, action) => {
             state.loading = false
-            state.blogs = []
             state.error = action.payload
         })
         // create blog
@@ -69,7 +92,6 @@ const blogs = createSlice({
             state.loading = true
             state.error = ''
             state.created = false
-            state.blogs = []
         })
         builder.addCase(createBlog.fulfilled, (state, action) => {
             state.loading = false
@@ -80,7 +102,22 @@ const blogs = createSlice({
             state.loading = false
             state.error = action.payload
             state.created = false
-            state.blogs = []
+        })
+        // update blog
+        builder.addCase(updateBlog.pending, (state, action) => {
+            state.loading = true
+            state.error = ''
+            state.updated = false
+        })
+        builder.addCase(updateBlog.fulfilled, (state, action) => {
+            state.loading = false
+            state.error = ''
+            state.updated = true
+        })
+        builder.addCase(updateBlog.rejected, (state, action) => {
+            state.loading = false
+            state.error = action.payload
+            state.updated = false
         })
     }
 })

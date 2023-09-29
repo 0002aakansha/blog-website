@@ -68,15 +68,40 @@ const deleteBlogs = async (req, res) => {
     }
 }
 
+const updateBlog = async (req, res) => {
+    try {
+        const { id } = req.params
+        const { title, body } = req.body
+
+        let image = null
+        let blog = null
+        if (req?.file?.buffer) {
+            image = {
+                data: req.file.buffer,
+                contentType: 'image/png'
+            }
+        }
+        else {
+            blog = await Blogs.findById({ _id: id })
+        }
+
+        const result = await Blogs.findByIdAndUpdate({ _id: id }, { $set: { image: image || blog.image, title, body } }, { new: true })
+
+        res.status(200).send({ success: true, msg: "updated successfully!", blog: result })
+    } catch (error) {
+        res.status(404).json({ success: false, msg: error })
+    }
+}
+
 const deleteBlog = async (req, res) => {
     try {
         const { _id } = req.body
         await Blogs.findByIdAndDelete({ _id })
-        await users.findByIdAndUpdate({ _id }, {})
+        await users.findByIdAndUpdate({ _id: req.user._id }, { $pull: { blogs: _id } })
         res.status(200).send({ success: true, msg: "deleted successfully!" })
     } catch (error) {
         res.status(404).json({ success: false, msg: error })
     }
 }
 
-module.exports = { createBlog, getBlogs, deleteBlogs, getBlogById, deleteBlog }
+module.exports = { createBlog, getBlogs, deleteBlogs, getBlogById, deleteBlog, updateBlog }

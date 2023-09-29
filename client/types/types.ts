@@ -3,8 +3,8 @@ export interface BlogType {
     image: Buffer
     title: string
     body: string,
-    author: string,
-    isFeatured: boolean
+    author?: string,
+    isFeatured?: boolean
 }
 
 export interface userType {
@@ -25,5 +25,6 @@ export interface blogReducerType {
     blogs: BlogType[],
     loading: boolean,
     created: boolean,
+    updated?: boolean,
     error: string
 }
